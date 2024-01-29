@@ -7,7 +7,7 @@ metadata:
        app: mongo
 
 spec:
-    replicas: 2
+    replicas: 1
     selector:
       matchLabels:
         app: mongo
@@ -59,7 +59,7 @@ metadata:
        app: mongo-express
 
 spec:
-    replicas: 2
+    replicas: 1
     selector:
       matchLabels:
         app: mongo-express
@@ -87,4 +87,19 @@ spec:
           - name: ME_CONFIG_MONGODB_SERVER
             value: mongo
 
+---
 
+apiVersion: v1
+kind: Service
+metadata:
+    name: mongo-express-service
+    namespace: mongo
+spec:
+  selector:
+    app: mongo-express
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+      nodePort: 30000
