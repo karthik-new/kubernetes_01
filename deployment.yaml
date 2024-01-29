@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
     name: mongo-db
-    namespace: mango
+    namespace: mongo
     labels:
        app: mongo
 
@@ -20,4 +20,30 @@ spec:
         - name: mongo
           image: mongo
           ports:
-          - containerPort: 80
+          - containerPort: 27017
+          env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            valueFrom:
+             secretKeyRef:
+               name: mongo-secret
+               key: username
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            valueFrom:
+             secretKeyRef:
+               name: mongo-secret
+               key: password
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+    name: mongoservice
+    namespace: mongo
+spec:
+  selector:
+    app: mongo
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
